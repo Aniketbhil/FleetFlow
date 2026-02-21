@@ -2,7 +2,7 @@ from fastapi import FastAPI
 
 from app.core.config import settings
 from app.db.init_db import init_db
-from app.routers import auth, users
+from app.routers import auth, users, vehicles
 
 app = FastAPI(title=settings.app_name)
 
@@ -12,3 +12,4 @@ def startup():
 
 app.include_router(auth.router)
 app.include_router(users.router)
+app.include_router(vehicles.router)
