@@ -8,20 +8,77 @@ import Trips from "../pages/trips/Trips"
 import Maintenance from "../pages/maintenance/Maintenance"
 import Expenses from "../pages/expenses/Expenses"
 import Analytics from "../pages/analytics/Analytics"
+import ProtectedRoute from "../components/common/ProtectedRoute"
+import { ROLES } from "../constants/roles"
 
 export default function AppRoutes() {
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
 
-      <Route element={<Layout />}>
-        <Route path="/" element={<Dashboard />} />
-        <Route path="/vehicles" element={<Vehicles />} />
-        <Route path="/drivers" element={<Drivers />} />
-        <Route path="/trips" element={<Trips />} />
-        <Route path="/maintenance" element={<Maintenance />} />
-        <Route path="/expenses" element={<Expenses />} />
-        <Route path="/analytics" element={<Analytics />} />
+      <Route
+        path="/"
+        element={
+          <ProtectedRoute>
+            <Layout />
+          </ProtectedRoute>
+        }
+      >
+        <Route index element={<Dashboard />} />
+
+        <Route
+          path="vehicles"
+          element={
+            <ProtectedRoute allowedRoles={[ROLES.MANAGER]}>
+              <Vehicles />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="drivers"
+          element={
+            <ProtectedRoute allowedRoles={[ROLES.MANAGER, ROLES.SAFETY]}>
+              <Drivers />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="trips"
+          element={
+            <ProtectedRoute allowedRoles={[ROLES.DISPATCHER]}>
+              <Trips />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="maintenance"
+          element={
+            <ProtectedRoute allowedRoles={[ROLES.MANAGER]}>
+              <Maintenance />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="expenses"
+          element={
+            <ProtectedRoute allowedRoles={[ROLES.FINANCE]}>
+              <Expenses />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="analytics"
+          element={
+            <ProtectedRoute allowedRoles={[ROLES.MANAGER, ROLES.FINANCE]}>
+              <Analytics />
+            </ProtectedRoute>
+          }
+        />
       </Route>
     </Routes>
   )
