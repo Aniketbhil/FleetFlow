@@ -1,63 +1,49 @@
-import PageContainer from "../../components/ui/PageContainer"
-import KpiCard from "../../components/ui/KpiCard"
+import { useEffect, useState } from "react";
+import { getDashboardStats } from "./api/";
 
-export default function Dashboard() {
+const Dashboard = () => {
+  const [stats, setStats] = useState(null);
 
-  // 🔹 Mock Data (Replace later with API)
-  const stats = {
-    activeFleet: 18,
-    maintenanceAlerts: 4,
-    utilizationRate: "76%",
-    pendingCargo: 9,
-  }
+  useEffect(() => {
+    fetchStats();
+  }, []);
+
+  const fetchStats = async () => {
+    try {
+      const res = await getDashboardStats();
+      setStats(res.data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  if (!stats) return <p>Loading...</p>;
 
   return (
-    <PageContainer title="Command Center">
+    <div>
+      <h2>Command Center</h2>
 
-      {/* KPI Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
-
-        <KpiCard
-          title="Active Fleet"
-          value={stats.activeFleet}
-          subtitle="Vehicles currently on trip"
-          color="green"
-        />
-
-        <KpiCard
-          title="Maintenance Alerts"
-          value={stats.maintenanceAlerts}
-          subtitle="Vehicles in shop"
-          color="yellow"
-        />
-
-        <KpiCard
-          title="Utilization Rate"
-          value={stats.utilizationRate}
-          subtitle="Fleet assigned vs idle"
-          color="blue"
-        />
-
-        <KpiCard
-          title="Pending Cargo"
-          value={stats.pendingCargo}
-          subtitle="Waiting for assignment"
-          color="red"
-        />
-
+      <div className="card">
+        <h4>Active Fleet</h4>
+        <p>{stats.activeFleet}</p>
       </div>
 
-      {/* Future Section Placeholder */}
-      <div className="mt-10 bg-white rounded-xl shadow-sm p-6">
-        <h3 className="text-lg font-semibold mb-4 text-slate-700">
-          Fleet Overview
-        </h3>
-
-        <p className="text-slate-500">
-          Charts and analytics will appear here.
-        </p>
+      <div className="card">
+        <h4>Maintenance Alerts</h4>
+        <p>{stats.maintenance}</p>
       </div>
 
-    </PageContainer>
-  )
-}
+      <div className="card">
+        <h4>Utilization</h4>
+        <p>{stats.utilization}%</p>
+      </div>
+
+      <div className="card">
+        <h4>Pending Cargo</h4>
+        <p>{stats.pendingCargo}</p>
+      </div>
+    </div>
+  );
+};
+
+export default Dashboard;

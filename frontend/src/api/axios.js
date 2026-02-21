@@ -1,12 +1,11 @@
 import axios from "axios"
 
 const api = axios.create({
-  baseURL: "http://localhost:8000",
+  baseURL: "/api",
 })
 
-// Attach token automatically
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem("access_token")
+  const token = localStorage.getItem("fleet_token")
 
   if (token) {
     config.headers.Authorization = `Bearer ${token}`

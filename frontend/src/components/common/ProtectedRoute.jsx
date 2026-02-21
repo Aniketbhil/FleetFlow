@@ -1,13 +1,11 @@
 import { Navigate } from "react-router-dom"
-import { useAuth } from "../../context/AuthContext"
-import Loader from "./Loader"
 
 export default function ProtectedRoute({ children }) {
-  const { user, loading } = useAuth()
+  const token = localStorage.getItem("fleet_token")
 
-  if (loading) return <Loader />
-
-  if (!user) return <Navigate to="/login" />
+  if (!token) {
+    return <Navigate to="/" />
+  }
 
   return children
 }

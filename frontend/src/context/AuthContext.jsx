@@ -1,54 +1,37 @@
-import { createContext, useContext, useState, useEffect } from "react"
-import { loginApi, getMeApi } from "../api/authApi"
+import { createContext, useState, useContext } from "react"
 
 const AuthContext = createContext()
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null)
-  const [loading, setLoading] = useState(true)
+  const [token, setToken] = useState(
+    localStorage.getItem("fleet_token")
+  )
 
-  useEffect(() => {
-    const init = async () => {
-      const token = localStorage.getItem("access_token")
+  const [role, setRole] = useState(
+    localStorage.getItem("fleet_role")
+  )
 
-      if (!token) {
-        setLoading(false)
-        return
-      }
-
-      try {
-        const data = await getMeApi()
-        setUser(data)
-      } catch (err) {
-        localStorage.removeItem("access_token")
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    init()
-  }, [])
-
-  const login = async (email, password) => {
-    const data = await loginApi({ email, password })
-
-    // assuming backend returns: { access_token: "...", token_type: "bearer" }
-    localStorage.setItem("access_token", data.access_token)
-
-    const userData = await getMeApi()
-    setUser(userData)
+  const login = (token, role) => {
+    localStorage.setItem("fleet_token", token)
+    localStorage.setItem("fleet_role", role)
+    setToken(token)
+    setRole(role)
   }
 
   const logout = () => {
-    localStorage.removeItem("access_token")
-    setUser(null)
+    localStorage.removeItem("fleet_token")
+    localStorage.removeItem("fleet_role")
+    setToken(null)
+    setRole(null)
   }
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, loading }}>
+    <AuthContext.Provider value={{ token, role, login, logout }}>
       {children}
     </AuthContext.Provider>
   )
 }
 
-export const useAuth = () => useContext(AuthContext)
+export const useAuth = () => {
+  return useContext(AuthContext)
+}

@@ -24,7 +24,14 @@ export default function AppRoutes() {
           </ProtectedRoute>
         }
       >
-        <Route index element={<Dashboard />} />
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+          }
+        />
 
         <Route
           path="vehicles"
